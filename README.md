@@ -15,3 +15,5 @@ Here are some links to lucid documents for project planing:
 <img width="916" alt="Screenshot 2021-11-02 at 12 07 49" src="https://user-images.githubusercontent.com/60715455/140980795-dd644a05-faa3-49f7-a71e-89840810b88d.png">
 [IS-Diagramm](https://lucid.app/lucidchart/74878630-0dd6-488e-8fe7-f3c676d7156b/edit?invitationId=inv_60564667-6047-415d-9b71-5d38c5539d8b)
 
+
+U need to install this: https://git-lfs.github.com/ if u wanna push and pull large files in the unity projects
