@@ -1,6 +1,9 @@
 # ModernMigraines
 Repo for Team 1 in CSE 118 
 
+U need to install this: https://git-lfs.github.com/ if u wanna push and pull large files in the unity projects
+use: git lfs track "*.so"
+
 Hey I tried to organize and set up a new github for our team. 
 Don't forget to use gitignore before initializing projects in folders.
 
@@ -16,4 +19,4 @@ Here are some links to lucid documents for project planing:
 [IS-Diagramm](https://lucid.app/lucidchart/74878630-0dd6-488e-8fe7-f3c676d7156b/edit?invitationId=inv_60564667-6047-415d-9b71-5d38c5539d8b)
 
 
-U need to install this: https://git-lfs.github.com/ if u wanna push and pull large files in the unity projects
+
