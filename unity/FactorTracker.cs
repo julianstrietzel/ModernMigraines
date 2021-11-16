@@ -156,7 +156,7 @@ public class FactorTracker : MonoBehaviour
         //Examine Personal Risk
         if(days < 14 || migraineDays < 5 || totalFlags == 0)
         {
-            //Notfiy user that personal risk assessment is unavailable
+            //TODO: Notfiy user that personal risk assessment is unavailable
         }
         else
         {
@@ -173,7 +173,7 @@ public class FactorTracker : MonoBehaviour
             if(flagPressureChange && pressureChangeOff)
                 flagsTriggered++;
 
-            //Notify User of their personal risk of a migraine today
+            //TODO: Notify User of their personal risk of a migraine today
             //Personal Risk depends on amount of flags triggered compared to total flags
             int PersonalRisk = flagsTriggered / totalFlags;
         }
@@ -193,7 +193,7 @@ public class FactorTracker : MonoBehaviour
         if (pressureChangeOff)
             generalRisk++;
 
-        //Notfiy User of the general risk today
+        //TODO: Notfiy User of the general risk today
 
     }
 
