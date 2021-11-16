@@ -2,7 +2,7 @@
 Repo for Team 1 in CSE 118 
 
 U need to install this: https://git-lfs.github.com/ if u wanna push and pull large files in the unity projects
-use: git lfs track "*.so"
+only need to do step 1 as the rest is already in the repo
 
 Hey I tried to organize and set up a new github for our team. 
 Don't forget to use gitignore before initializing projects in folders.
