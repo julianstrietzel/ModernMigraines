@@ -1,22 +1,47 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System;
 using UnityEngine;
 using Firebase.Database;
 
-public static class LocalDataManager 
+using System.Collections;
+using System;
+
+public class LocalDataManager : MonoBehaviour
 {
     //use GetData with unix timestamp of a day to acces DayData Object for that day
     //U can also use the public dayDatas Dict to iterate over all the data to calc stuff (averages)
 
+    public static LocalDataManager instance;
     public static Dictionary<int, DayData> dayDatas;
-    private static string path = Application.persistentDataPath + "db.file";
+    private static string path;
     private static BinaryFormatter formatter;
     private static bool locAccess;
     
 
-    public static void SetUpLocalDataManager()
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            path = Application.persistentDataPath + "db.file";
+            setUp();
+            foreach (KeyValuePair<int, DayData> day in LocalDataManager.dayDatas)
+            {
+                Debug.Log(day.Value.ToString() + "at initDB");
+
+            }
+        }
+        
+
+    }
+
+    private void OnApplicationQuit()
+    {
+        LocalDataManager.SaveLocally();
+    }
+
+    private void setUp() 
     {
 
         if(formatter != null)
@@ -28,19 +53,21 @@ public static class LocalDataManager
 
         Debug.Log("reached 1here");
 
-        //if (File.Exists(path)) mocking allways new pull from db
-        if(false)
+        if (File.Exists(path)) //mocking allways new pull from db
+        //if(false)
         {
             Debug.Log("read from local file");
             FileStream stream = File.OpenRead(path);
             dayDatas = (Dictionary<int, DayData>)formatter.Deserialize(stream);
             stream.Close();
-        } else
+        }
+        else
         {
             dayDatas = new Dictionary<int, DayData>();
         }
 
-        /**AddWeather(1234564256);
+        
+        /**
         Debug.Log("reached 2 here");
 
         AddWeather(1637668800);
@@ -72,8 +99,9 @@ public static class LocalDataManager
             snapDataDict.Add(data.Key, (string)data.Value);
         }
 
+        Debug.Log("added");
         DayData day =  AddData(eTimeCode, snapDataDict);
-        AddWeather(eTimeCode);
+        instance.AddWeather(eTimeCode);
     }
 
     
@@ -137,38 +165,63 @@ public static class LocalDataManager
     /**
      * can so far only fetch weather for today
      */
-    public static void AddWeather(int timestamp)
+    public void AddWeather(int timestamp)
     {
         Dictionary<string, string> dict;
         if (!locAccess)
         {
             Debug.Log("no location access");
         }
-        if (GetDay(timestamp).hasWeather())
+        if (GetDay(timestamp).HasWeather())
         {
             return;
         }
-
-        if(DayData.getNormTimestamp(timestamp) == DayData.getNormTimeToday())
+        Debug.Log("trying to fetch weather data for " + timestamp);
+        //if(DayData.getNormTimestamp(timestamp) == DayData.getNormTimeToday())
+        if (false)
         {
-            dict = StaticWeatherManager.FetchWeatherDataNow(); 
-            AddDataForToday(dict);
+            StaticWeatherManager.FetchWeatherDataNow((dict) =>
+            {
+                AddDataForToday(dict);
+
+
+                Debug.Log("added weather data" + timestamp);
+
+                string debugLog = "weather for timestamp";
+                foreach (KeyValuePair<string, string> pair in dict)
+                {
+                    debugLog += " key:  " + pair.Key + " value: " + pair.Value;
+                }
+
+                Debug.Log(debugLog);
+
+            }
+            );
         }
         else
         {
-            dict = StaticWeatherManager.FetchWeatherHistory(timestamp);
+            StartCoroutine(
+                StaticWeatherManager.FetchWeatherHistory(timestamp, (dict) =>
+                { 
+                Debug.Log("added weather data" + timestamp);
+                AddData(timestamp, dict);
+                string debugLog = "weather for timestamp";
+                foreach (KeyValuePair<string, string> pair in dict)
+                {
+                    debugLog += " key:  " + pair.Key + " value: " + pair.Value;
+                }
+
+                Debug.Log(debugLog);
+            })
+            );
             
-            AddData(timestamp, dict);
+            
 
         }
 
-        string debugLog = "weather for timestamp";
-        foreach (KeyValuePair<string, string> pair in dict)
-        {
-            debugLog += " key:  " + pair.Key + " value: " + pair.Value;
-        }
-
-        Debug.Log(debugLog);
+        
 
     }
+
+    
 }
