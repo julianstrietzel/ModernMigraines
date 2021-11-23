@@ -10,13 +10,18 @@ public class DayData
 
     // Health Data
     public int stepcount;
+
     public bool migraine;
     public int severity; //only if migraine
     public bool symptoms; // only if not migraine
 
     //Weather Data
-    public float temp;
-    public float humidity;
+    public float temp_min = float.NegativeInfinity;
+    public float temp_max = float.NegativeInfinity;
+    public float pressure = float.NegativeInfinity;
+    public float humidity = float.NegativeInfinity;
+
+
 
     public DayData()
     {
@@ -54,16 +59,30 @@ public class DayData
         {
             int.TryParse(resstepcount, out stepcount);
         }
-        string restemp;
-        if (data.TryGetValue("temp", out restemp))
+
+
+        string restemp_min;
+        if (data.TryGetValue("temp_min", out restemp_min))
         {
-            float.TryParse(restemp, out temp);
+            float.TryParse(restemp_min, out temp_min);
+        }
+        string restemp_max;
+        if (data.TryGetValue("temp_max", out restemp_max))
+        {
+            float.TryParse(restemp_max, out temp_max);
         }
         string reshumidity;
         if (data.TryGetValue("humidity", out reshumidity))
         {
             float.TryParse(reshumidity, out humidity);
         }
+        string respressure;
+        if (data.TryGetValue("pressure", out respressure))
+        {
+            float.TryParse(respressure, out pressure);
+        }
+
+
         string resmigraine;
         if (data.TryGetValue("migraine", out resmigraine))
         {
@@ -98,13 +117,18 @@ public class DayData
         return (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
     }
 
+    public static int GetUnixTimeDaysAgo(int days)
+    {
+        return getNormTimestamp(GetUnixTime()) - days * (24 * 60 * 60);
+    }
+
     public bool equals(DayData other)
     {
         return (getNormTimestamp(this.timestamp) == getNormTimestamp(other.timestamp));
     }
 
-    override
-    public string ToString()
+    public
+    override string ToString()
     {
         string output = timestamp + ": ";
         if(stepcount != 0)
@@ -112,9 +136,21 @@ public class DayData
             output += "stepcount: " + stepcount;
         }
 
-        if (temp != 0)
+        if (!(float.IsNegativeInfinity(temp_min)))
         {
-            output += "temp: " + temp;
+            output += "tempmin: " + temp_min;
+        }
+        if (!(float.IsNegativeInfinity(temp_max)))
+        {
+            output += "tempmax: " + temp_max;
+        }
+        if (!(float.IsNegativeInfinity(humidity)))
+        {
+            output += "humididty: " + humidity;
+        }
+        if (!(float.IsNegativeInfinity(pressure)))
+        {
+            output += "pressure: " + pressure;
         }
 
         output += "migraine: " + migraine;
@@ -126,6 +162,11 @@ public class DayData
             output += "symptoms" + symptoms;
         }
         return output;
+    }
+
+    public bool hasWeather()
+    {
+        return !(float.IsNegativeInfinity(temp_min));
     }
 
 

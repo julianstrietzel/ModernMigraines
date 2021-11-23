@@ -7,20 +7,29 @@ using Firebase.Database;
 
 public static class LocalDataManager 
 {
+    //use GetData with unix timestamp of a day to acces DayData Object for that day
+    //U can also use the public dayDatas Dict to iterate over all the data to calc stuff (averages)
+
     public static Dictionary<int, DayData> dayDatas;
     private static string path = Application.persistentDataPath + "db.file";
     private static BinaryFormatter formatter;
+    private static bool locAccess;
+    
 
     public static void SetUpLocalDataManager()
     {
+
         if(formatter != null)
         {
             return;
         }
         formatter = new BinaryFormatter();
-        
+        locAccess = StaticWeatherManager.FetchLocationData();
 
-        if (File.Exists(path))
+        Debug.Log("reached 1here");
+
+        //if (File.Exists(path)) mocking allways new pull from db
+        if(false)
         {
             Debug.Log("read from local file");
             FileStream stream = File.OpenRead(path);
@@ -31,7 +40,12 @@ public static class LocalDataManager
             dayDatas = new Dictionary<int, DayData>();
         }
 
+        /**AddWeather(1234564256);
+        Debug.Log("reached 2 here");
 
+        AddWeather(1637668800);
+        AddWeather(11111111);**/
+        Debug.Log("reached here");
 
 
 
@@ -58,13 +72,13 @@ public static class LocalDataManager
             snapDataDict.Add(data.Key, (string)data.Value);
         }
 
-        DayData day =  addData(eTimeCode, snapDataDict);
-
+        DayData day =  AddData(eTimeCode, snapDataDict);
+        AddWeather(eTimeCode);
     }
 
     
 
-    public static void saveLocally()
+    public static void SaveLocally()
     {
         FileStream stream = File.OpenWrite(path);
         formatter.Serialize(stream, dayDatas);
@@ -74,26 +88,26 @@ public static class LocalDataManager
 
 
 
-    public static DayData getToday()
+    public static DayData GetToday()
     {
-        return getDay(DayData.GetUnixTime());
+        return GetDay(DayData.GetUnixTime());
     }
 
 
 
-    public static DayData getDay(int timestamp)
+    public static DayData GetDay(int timestamp)
     {
         DayData res;
         int normTime = DayData.getNormTimestamp(timestamp);
         if (!dayDatas.TryGetValue(normTime, out res))
         {
-            res = new DayData();
+            res = new DayData(timestamp);
             dayDatas.Add(res.timestamp, res);
         }
         return res;
     }
 
-    public static DayData addData(int timestamp, Dictionary<string, string> data)
+    public static DayData AddData(int timestamp, Dictionary<string, string> data)
     {
         timestamp = DayData.getNormTimestamp(timestamp);
         DayData day;
@@ -101,7 +115,6 @@ public static class LocalDataManager
         {
             day.SetData(data);
             Debug.Log(day.ToString() + " updated");
-
 
         }
         else
@@ -115,8 +128,47 @@ public static class LocalDataManager
         return day;
     }
 
-    public static DayData addDataForToday(Dictionary<string, string> data)
+
+    public static DayData AddDataForToday(Dictionary<string, string> data)
     {
-        return addData(DayData.getNormTimeToday(), data);
+        return AddData(DayData.getNormTimeToday(), data);
+    }
+
+    /**
+     * can so far only fetch weather for today
+     */
+    public static void AddWeather(int timestamp)
+    {
+        Dictionary<string, string> dict;
+        if (!locAccess)
+        {
+            Debug.Log("no location access");
+        }
+        if (GetDay(timestamp).hasWeather())
+        {
+            return;
+        }
+
+        if(DayData.getNormTimestamp(timestamp) == DayData.getNormTimeToday())
+        {
+            dict = StaticWeatherManager.FetchWeatherDataNow(); 
+            AddDataForToday(dict);
+        }
+        else
+        {
+            dict = StaticWeatherManager.FetchWeatherHistory(timestamp);
+            
+            AddData(timestamp, dict);
+
+        }
+
+        string debugLog = "weather for timestamp";
+        foreach (KeyValuePair<string, string> pair in dict)
+        {
+            debugLog += " key:  " + pair.Key + " value: " + pair.Value;
+        }
+
+        Debug.Log(debugLog);
+
     }
 }

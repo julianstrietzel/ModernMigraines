@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Test : MonoBehaviour
+public class InitDB : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -10,20 +10,20 @@ public class Test : MonoBehaviour
         LocalDataManager.SetUpLocalDataManager();
         foreach (KeyValuePair<int, DayData> day in LocalDataManager.dayDatas)
         {
-            print(day.Value.ToString());
+            Debug.Log(day.Value.ToString());
 
         }
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        LocalDataManager.GetToday();
+        LocalDataManager.GetDay(1237634);
     }
 
-    void OnApplicationQuit()
+    private void OnApplicationQuit()
     {
-        LocalDataManager.saveLocally();
+        LocalDataManager.SaveLocally();
     }
 }
