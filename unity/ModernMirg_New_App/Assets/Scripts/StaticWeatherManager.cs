@@ -6,9 +6,10 @@ using System.Collections;
 
 public static class StaticWeatherManager
 {
-    public static string apiKey = "282e2ea449f833e3d567ef4e2d087815";
+    public static string apiKey = "f5029e208c2c76e6b91d38f371586fc7";
     private static string currentWeatherApi = "api.openweathermap.org/data/2.5/weather?";
     private static string historyWeatherApi = "history.openweathermap.org/data/2.5/history/city?";
+
     public static bool status;
     public static string statusText;
 
@@ -64,7 +65,7 @@ public static class StaticWeatherManager
     {
         Dictionary<string, string> data_dict = new Dictionary<string, string>();
 
-        string url = currentWeatherApi + "lat=" + lastLocation.latitude + "&lon=" + lastLocation.longitude + "&appid=" + apiKey + "&units=metric";
+        string url = "https://" + currentWeatherApi + "lat=" + lastLocation.latitude + "&lon=" + lastLocation.longitude + "&appid=" + apiKey + "&units=metric";
         UnityWebRequest fetchWeatherRequest = UnityWebRequest.Get(url);
 
         yield return fetchWeatherRequest.SendWebRequest();
@@ -92,8 +93,8 @@ public static class StaticWeatherManager
     {
         Debug.Log("FETCHING data");
         Dictionary<string, string> data_dict = new Dictionary<string, string>();
-
-        string url = historyWeatherApi + "lat=" + lastLocation.latitude + "&lon=" + lastLocation.longitude + "&type=hour&cnt=" + timestamp.ToString() +  "&appid=" + apiKey + "&units=metric";
+        //string url = "https://history.openweathermap.org/data/2.5/history/city?lat=32.71574&lon=-117.1611&type=hour&cnt=" + timestamp + "&appid=f5029e208c2c76e6b91d38f371586fc7&units=metric";
+        string url = "https://" + historyWeatherApi + "lat=" + lastLocation.latitude + "&lon=" + lastLocation.longitude + "&type=hour&cnt=" + timestamp.ToString() +  "&appid=" + apiKey + "&units=metric";
         Debug.Log(url);
         UnityWebRequest fetchWeatherRequest = UnityWebRequest.Get(url);
         int before = DayData.GetUnixTime();
@@ -107,15 +108,16 @@ public static class StaticWeatherManager
             Debug.Log(fetchWeatherRequest.downloadHandler.text);
             var response = JSON.Parse(fetchWeatherRequest.downloadHandler.text);
 
-            data_dict.Add("temp_max", ((float)response["temp_max"]).ToString());
-            data_dict.Add("temp_min", ((float)response["temp_mxin"]).ToString());
-            data_dict.Add("humidity", ((float)response["humidity"]).ToString());
-            data_dict.Add("pressure", ((float)response["pressure"]).ToString());
+            data_dict.Add("temp_max", ((float)response["main"]["temp_max"]).ToString());
+            data_dict.Add("temp_min", ((float)response["main"]["temp_mxin"]).ToString());
+            data_dict.Add("humidity", ((float)response["main"]["humidity"]).ToString());
+            data_dict.Add("pressure", ((float)response["main"]["pressure"]).ToString());
         }
         else
         {
             //Check and print error
             statusText = fetchWeatherRequest.error;
+            Debug.Log("error in FetchweatherHistory static weathermanag: " + statusText);
 
         }
         callBackFunction(data_dict);

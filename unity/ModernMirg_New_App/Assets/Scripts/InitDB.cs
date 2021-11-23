@@ -17,8 +17,5 @@ public class InitDB : MonoBehaviour
         //LocalDataManager.GetDay(1237634);
     }
 
-    private void OnApplicationQuit()
-    {
-        LocalDataManager.SaveLocally();
-    }
+    
 }
