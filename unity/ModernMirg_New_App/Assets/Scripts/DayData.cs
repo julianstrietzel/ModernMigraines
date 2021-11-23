@@ -136,33 +136,33 @@ public class DayData
         string output = timestamp + ": ";
         if(stepcount != 0)
         {
-            output += "stepcount: " + stepcount;
+            output += " stepcount: " + stepcount;
         }
 
         if (!(float.IsNegativeInfinity(temp_min)))
         {
-            output += "tempmin: " + temp_min;
+            output += " tempmin: " + temp_min;
         }
         if (!(float.IsNegativeInfinity(temp_max)))
         {
-            output += "tempmax: " + temp_max;
+            output += " tempmax: " + temp_max;
         }
         if (!(float.IsNegativeInfinity(humidity)))
         {
-            output += "humididty: " + humidity;
+            output += " humididty: " + humidity;
         }
         if (!(float.IsNegativeInfinity(pressure)))
         {
-            output += "pressure: " + pressure;
+            output += " pressure: " + pressure;
         }
 
-        output += "migraine: " + migraine;
+        output += " migraine: " + migraine;
         if (migraine)
         {
-            output += "severity: " + severity;
+            output += " severity: " + severity;
         } else
         {
-            output += "symptoms" + symptoms;
+            output += " symptoms" + symptoms;
         }
         return output;
     }

@@ -26,11 +26,7 @@ public class LocalDataManager : MonoBehaviour
             instance = this;
             path = Application.persistentDataPath + "db.file";
             setUp();
-            foreach (KeyValuePair<int, DayData> day in LocalDataManager.dayDatas)
-            {
-                Debug.Log(day.Value.ToString() + "at initDB");
-
-            }
+            
         }
         
 
@@ -72,9 +68,13 @@ public class LocalDataManager : MonoBehaviour
 
         AddWeather(1637668800);
         AddWeather(11111111);**/
-        Debug.Log("reached here");
+        
 
+        foreach (KeyValuePair<int, DayData> day in LocalDataManager.dayDatas)
+        {
+            Debug.Log(day.Value.ToString() + " : SetUp in Local DataManager -> what is saved in local file");
 
+        }
 
         DatabaseReference dbRef = FirebaseDatabase.DefaultInstance
             .GetReference("users/TEST_USER");
@@ -99,8 +99,9 @@ public class LocalDataManager : MonoBehaviour
             snapDataDict.Add(data.Key, (string)data.Value);
         }
 
-        Debug.Log("added");
+        
         DayData day =  AddData(eTimeCode, snapDataDict);
+        Debug.Log(day.timestamp + "added or changed from db in LocalDM");
         instance.AddWeather(eTimeCode);
     }
 
@@ -111,7 +112,7 @@ public class LocalDataManager : MonoBehaviour
         FileStream stream = File.OpenWrite(path);
         formatter.Serialize(stream, dayDatas);
         stream.Close();
-        
+        Debug.Log("saved locally in LDM");
     }
 
 
@@ -165,29 +166,30 @@ public class LocalDataManager : MonoBehaviour
     /**
      * can so far only fetch weather for today
      */
-    public void AddWeather(int timestamp)
+    public void AddWeather(int ptimestamp)
     {
-        Dictionary<string, string> dict;
         if (!locAccess)
         {
             Debug.Log("no location access");
         }
-        if (GetDay(timestamp).HasWeather())
+        if (GetDay(ptimestamp).HasWeather())
         {
             return;
         }
-        Debug.Log("trying to fetch weather data for " + timestamp);
-        //if(DayData.getNormTimestamp(timestamp) == DayData.getNormTimeToday())
-        if (false)
+        int timestamp = DayData.getNormTimestamp(ptimestamp);
+        Debug.Log("trying to fetch weather data for " + ptimestamp + "being norm " + timestamp);
+
+        if (timestamp == DayData.getNormTimeToday())
+        //if (false)
         {
             StaticWeatherManager.FetchWeatherDataNow((dict) =>
             {
                 AddDataForToday(dict);
 
 
-                Debug.Log("added weather data" + timestamp);
+                Debug.Log("added weather data for " + timestamp + "in Callback FUnction LDM");
 
-                string debugLog = "weather for timestamp";
+                string debugLog = "weather today for timestamp" + timestamp;
                 foreach (KeyValuePair<string, string> pair in dict)
                 {
                     debugLog += " key:  " + pair.Key + " value: " + pair.Value;
@@ -205,7 +207,7 @@ public class LocalDataManager : MonoBehaviour
                 { 
                 Debug.Log("added weather data" + timestamp);
                 AddData(timestamp, dict);
-                string debugLog = "weather for timestamp";
+                string debugLog = "weather for timestamp" + timestamp + " added via fetch historical ";
                 foreach (KeyValuePair<string, string> pair in dict)
                 {
                     debugLog += " key:  " + pair.Key + " value: " + pair.Value;
