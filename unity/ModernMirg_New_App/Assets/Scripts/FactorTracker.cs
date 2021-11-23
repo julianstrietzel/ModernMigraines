@@ -8,31 +8,13 @@ using Unity.Mathematics;
 using System;
 using Firebase.Database;
 
-public class FactorTracker : MonoBehaviour
+public class FactorTracker
 {
     //Personal and General Risk both range from 0 to 100.
 
-    int PersonalRisk;    // PersonalRisk = -1 if not enough information is available yet
-    int generalRisk;
+    private int PersonalRisk;    // PersonalRisk = -1 if not enough information is available yet
+    private int generalRisk;
 
-    int mAverageTemp;
-    int mAveragePressure;
-    int mAverageHumidity;
-    int mAverageTempChange;
-    int mAveragePressureChange;
-    int mAverageHumidityChange;
-
-    int migraineDays;
-
-    int tempToday;
-    int humidityToday;
-    int pressureToday;
-    int tempChange;
-    int pressureChange;
-    int humidityChange;
-
-    bool migraineReported;
-    bool migraineUnreported;
 
 
     public int getPersonalRisk()
@@ -49,8 +31,6 @@ public class FactorTracker : MonoBehaviour
     // Updates the variables PersonalRisk and generalRisk
     public void updateRisks()
     {
-        //TODO: Read data from database(Days tracked, average)
-        //TODO: Read data from sensors
 
         int averageTemp = 0;
         int averagePressure = 0;
@@ -59,41 +39,42 @@ public class FactorTracker : MonoBehaviour
         int averagePressureChange = 0;
         int averageHumidityChange = 0;
 
-        mAverageTemp = 0;
-        mAveragePressure = 0;
-        mAverageHumidity = 0;
-        mAverageTempChange = 0;
-        mAveragePressureChange = 0;
-        mAverageHumidityChange = 0;
+        int mAverageTemp = 0;
+        int mAveragePressure = 0;
+        int mAverageHumidity = 0;
+        int mAverageTempChange = 0;
+        int mAveragePressureChange = 0;
+        int mAverageHumidityChange = 0;
 
-        private int prevTemp;
-        private int prevPressure;
-        private int prevHumidity;
-        private int dayCount = 0;
-        private int mDayCount = 0;
+        int prevTemp;
+        int prevPressure;
+        int prevHumidity;
+        int dayCount = 0;
+        int mDayCount = 0;
 
-        //Iterate over all DayData objects
-        foreach (KeyValuePair<int, DayData> dd in dayDatas)
+    //Iterate over all DayData objects
+        foreach (KeyValuePair<int, DayData> day in dayDatas)
         {
 
             dayCount++;
-            averageTemp += dd.Value.temp_max;
-            averagePressure += dd.Value.pressure;
-            averageHumidity += dd.Value.humidity;
+            averageTemp += day.Value.temp_max;
+            averagePressure += day.Value.pressure;
+            averageHumidity += day.Value.humidity;
 
-            if(dayCount != 1){
+            if (dayCount != 1)
+            {
                 averageTempChange += Math.Abs(dd.temp_max - prevTemp);
                 averagePressureChange += Math.Abs(dd.pressure - prevPressure);
                 averageHumidityChange += Math.Abs(dd.humidity - prevHumidity);
             }
 
             //Update migraine day values
-            if (dd.Value.migraine)
+            if (day.Value.migraine)
             {
                 mDayCount++;
-                mAverageTemp += dd.Value.temp_max;
-                mAveragePressure += dd.Value.pressure;
-                mAverageHumidity += dd.Value.humidity;
+                mAverageTemp += day.Value.temp_max;
+                mAveragePressure += day.Value.pressure;
+                mAverageHumidity += day.Value.humidity;
 
                 if (dayCount != 1)
                 {
@@ -105,9 +86,9 @@ public class FactorTracker : MonoBehaviour
             }
 
 
-            prevTemp = dd.Value.temp_max;
-            prevPressure = dd.Value.pressure;
-            prevHumidity = dd.Value.humidity;
+            prevTemp = day.Value.temp_max;
+            prevPressure = day.Value.pressure;
+            prevHumidity = day.Value.humidity;
 
         }
 
@@ -224,7 +205,7 @@ public class FactorTracker : MonoBehaviour
         }
 
         //Examine Personal Risk
-        if(days < 14 || migraineDays < 5 || totalFlags == 0)
+        if(days < 10 || migraineDays < 3 || totalFlags == 0)
         {
             PersonalRisk = -1;
         }
