@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System;
 using UnityEngine;
 using Firebase.Database;
 
@@ -35,12 +34,14 @@ public static class LocalDataManager
             FileStream stream = File.OpenRead(path);
             dayDatas = (Dictionary<int, DayData>)formatter.Deserialize(stream);
             stream.Close();
-        } else
+        }
+        else
         {
             dayDatas = new Dictionary<int, DayData>();
         }
 
-        /**AddWeather(1234564256);
+        
+        /**
         Debug.Log("reached 2 here");
 
         AddWeather(1637668800);
@@ -72,6 +73,7 @@ public static class LocalDataManager
             snapDataDict.Add(data.Key, (string)data.Value);
         }
 
+        Debug.Log("added");
         DayData day =  AddData(eTimeCode, snapDataDict);
         AddWeather(eTimeCode);
     }
@@ -144,31 +146,52 @@ public static class LocalDataManager
         {
             Debug.Log("no location access");
         }
-        if (GetDay(timestamp).hasWeather())
+        if (GetDay(timestamp).HasWeather())
         {
             return;
         }
-
-        if(DayData.getNormTimestamp(timestamp) == DayData.getNormTimeToday())
+        Debug.Log("trying to fetch weather data for " + timestamp);
+        //if(DayData.getNormTimestamp(timestamp) == DayData.getNormTimeToday())
+        if(false)
         {
-            dict = StaticWeatherManager.FetchWeatherDataNow(); 
-            AddDataForToday(dict);
+            StaticWeatherManager.FetchWeatherDataNow((dict) =>
+            {
+                AddDataForToday(dict);
+
+
+                Debug.Log("added weather data" + timestamp);
+
+                string debugLog = "weather for timestamp";
+                foreach (KeyValuePair<string, string> pair in dict)
+                {
+                    debugLog += " key:  " + pair.Key + " value: " + pair.Value;
+                }
+
+                Debug.Log(debugLog);
+
+            }
+            ); 
         }
         else
         {
-            dict = StaticWeatherManager.FetchWeatherHistory(timestamp);
+            StaticWeatherManager.FetchWeatherHistory(timestamp, (dict) =>
+            {
+                Debug.Log("added weather data" + timestamp);
+                AddData(timestamp, dict);
+                string debugLog = "weather for timestamp";
+                foreach (KeyValuePair<string, string> pair in dict)
+                {
+                    debugLog += " key:  " + pair.Key + " value: " + pair.Value;
+                }
+
+                Debug.Log(debugLog);
+            });
             
-            AddData(timestamp, dict);
+            
 
         }
 
-        string debugLog = "weather for timestamp";
-        foreach (KeyValuePair<string, string> pair in dict)
-        {
-            debugLog += " key:  " + pair.Key + " value: " + pair.Value;
-        }
-
-        Debug.Log(debugLog);
+        
 
     }
 }

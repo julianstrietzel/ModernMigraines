@@ -10,7 +10,7 @@ public class InitDB : MonoBehaviour
         LocalDataManager.SetUpLocalDataManager();
         foreach (KeyValuePair<int, DayData> day in LocalDataManager.dayDatas)
         {
-            Debug.Log(day.Value.ToString());
+            Debug.Log(day.Value.ToString() + "at initDB");
 
         }
     }
@@ -18,8 +18,8 @@ public class InitDB : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        LocalDataManager.GetToday();
-        LocalDataManager.GetDay(1237634);
+        //LocalDataManager.GetToday();
+        //LocalDataManager.GetDay(1237634);
     }
 
     private void OnApplicationQuit()

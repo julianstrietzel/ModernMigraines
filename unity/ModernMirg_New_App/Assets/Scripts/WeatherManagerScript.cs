@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Networking;
 using SimpleJSON;
-
+using System;
 
 /**
  * This class will update the weather data of today everytime  
@@ -106,5 +106,8 @@ public class WeatherManager : MonoBehaviour
             //Check and print error
             statusText.text = fetchWeatherRequest.error;
         }
+
+
+
     }
 }

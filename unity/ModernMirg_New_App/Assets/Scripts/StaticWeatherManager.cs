@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
+using System.Collections;
 
 public static class StaticWeatherManager
 {
@@ -59,28 +60,24 @@ public static class StaticWeatherManager
 
     
 
-    public static Dictionary<string, string> FetchWeatherDataNow()
+    public static IEnumerator FetchWeatherDataNow(System.Action<Dictionary<string, string>> callBackFunction)
     {
         Dictionary<string, string> data_dict = new Dictionary<string, string>();
 
         string url = currentWeatherApi + "lat=" + lastLocation.latitude + "&lon=" + lastLocation.longitude + "&appid=" + apiKey + "&units=metric";
         UnityWebRequest fetchWeatherRequest = UnityWebRequest.Get(url);
-        fetchWeatherRequest.SendWebRequest();
-        int maxWait = 10;
-        while(!fetchWeatherRequest.isDone && maxWait > 0)
-        {
-            new WaitForSeconds(1);
-            maxWait--;
-        }
+
+        yield return fetchWeatherRequest.SendWebRequest();
+        
         if (fetchWeatherRequest.result != UnityWebRequest.Result.ConnectionError && fetchWeatherRequest.result != UnityWebRequest.Result.ProtocolError)
         {
             Debug.Log(fetchWeatherRequest.downloadHandler.text);
             var response = JSON.Parse(fetchWeatherRequest.downloadHandler.text);
 
-            data_dict.Add("temp_max", ((float)response["temp_max"]).ToString());
-            data_dict.Add("temp_min", ((float)response["temp_mxin"]).ToString());
-            data_dict.Add("humidity", ((float)response["humidity"]).ToString());
-            data_dict.Add("pressure", ((float)response["pressure"]).ToString());
+            data_dict.Add("temp_max", ((float)response["main"]["temp_max"]).ToString());
+            data_dict.Add("temp_min", ((float)response["main"]["temp_mxin"]).ToString());
+            data_dict.Add("humidity", ((float)response["main"]["humidity"]).ToString());
+            data_dict.Add("pressure", ((float)response["main"]["pressure"]).ToString());
         }
         else
         {
@@ -88,29 +85,22 @@ public static class StaticWeatherManager
             statusText = fetchWeatherRequest.error;
             
         }
-        return data_dict;
+        callBackFunction(data_dict);
     }
 
-    public static  Dictionary<string,string> FetchWeatherHistory(int timestamp)
+    public static IEnumerator FetchWeatherHistory(int timestamp, System.Action<Dictionary<string, string>> callBackFunction)
     {
+        Debug.Log("FETCHING data");
         Dictionary<string, string> data_dict = new Dictionary<string, string>();
 
         string url = historyWeatherApi + "lat=" + lastLocation.latitude + "&lon=" + lastLocation.longitude + "&type=hour&cnt=" + timestamp.ToString() +  "&appid=" + apiKey + "&units=metric";
         Debug.Log(url);
         UnityWebRequest fetchWeatherRequest = UnityWebRequest.Get(url);
         int before = DayData.GetUnixTime();
-        fetchWeatherRequest.SendWebRequest();
+        yield return fetchWeatherRequest.SendWebRequest();
 
         Debug.Log("waited for weather for " + (DayData.GetUnixTime() - before) + " secs");
-        int maxWait = 10;
         
-        while (!fetchWeatherRequest.isDone && maxWait > 0)
-        {
-            //await fetchWeatherRequest.ta
-            new WaitForSeconds(1);
-            maxWait--;
-            Debug.Log("waiting");
-        }
         if (fetchWeatherRequest.result != UnityWebRequest.Result.ConnectionError && fetchWeatherRequest.result != UnityWebRequest.Result.ProtocolError)
         {
 
@@ -128,7 +118,7 @@ public static class StaticWeatherManager
             statusText = fetchWeatherRequest.error;
 
         }
-        return data_dict;
-    }
+        callBackFunction(data_dict);
+       }
 }
 

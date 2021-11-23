@@ -7,19 +7,21 @@ using System;
 public class DayData
 {
     public int timestamp;
+    public bool hasWeather;
 
     // Health Data
     public int stepcount;
+    //TODO add sleep and get health data from apple
 
     public bool migraine;
     public int severity; //only if migraine
     public bool symptoms; // only if not migraine
 
     //Weather Data
-    public float temp_min = float.NegativeInfinity;
+    public float temp_min = float.NegativeInfinity; //celsius
     public float temp_max = float.NegativeInfinity;
-    public float pressure = float.NegativeInfinity;
-    public float humidity = float.NegativeInfinity;
+    public float pressure = float.NegativeInfinity; //pascal
+    public float humidity = float.NegativeInfinity; //%
 
 
 
@@ -65,6 +67,7 @@ public class DayData
         if (data.TryGetValue("temp_min", out restemp_min))
         {
             float.TryParse(restemp_min, out temp_min);
+            hasWeather = true;
         }
         string restemp_max;
         if (data.TryGetValue("temp_max", out restemp_max))
@@ -164,9 +167,9 @@ public class DayData
         return output;
     }
 
-    public bool hasWeather()
+    public bool HasWeather()
     {
-        return !(float.IsNegativeInfinity(temp_min));
+        return hasWeather;
     }
 
 
