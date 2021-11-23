@@ -12,8 +12,8 @@ public class FactorTracker : MonoBehaviour
 {
     //Personal and General Risk both range from 0 to 100.
 
-    public int PersonalRisk;    // PersonalRisk = -1 if not enough information is available yet
-    public int generalRisk;
+    int PersonalRisk;    // PersonalRisk = -1 if not enough information is available yet
+    int generalRisk;
 
     int mAverageTemp;
     int mAveragePressure;
@@ -35,8 +35,19 @@ public class FactorTracker : MonoBehaviour
     bool migraineUnreported;
 
 
-    // Start is called before the first frame update
-    public void getRisk()
+    public int getPersonalRisk()
+    {
+        //Returns -1 if not enough info yet
+        return PersonalRisk;
+    }
+
+    public int getGeneralRisk()
+    {
+        return generalRisk;
+    }
+
+    // Updates the variables PersonalRisk and generalRisk
+    public void updateRisks()
     {
         //TODO: Read data from database(Days tracked, average)
         //TODO: Read data from sensors
