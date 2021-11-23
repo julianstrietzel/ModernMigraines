@@ -7,12 +7,7 @@ public class InitDB : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        LocalDataManager.SetUpLocalDataManager();
-        foreach (KeyValuePair<int, DayData> day in LocalDataManager.dayDatas)
-        {
-            Debug.Log(day.Value.ToString() + "at initDB");
-
-        }
+        
     }
 
     // Update is called once per frame

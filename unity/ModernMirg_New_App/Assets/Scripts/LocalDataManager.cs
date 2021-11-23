@@ -4,18 +4,44 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using Firebase.Database;
 
-public static class LocalDataManager 
+using System.Collections;
+using System;
+
+public class LocalDataManager : MonoBehaviour
 {
     //use GetData with unix timestamp of a day to acces DayData Object for that day
     //U can also use the public dayDatas Dict to iterate over all the data to calc stuff (averages)
 
+    public static LocalDataManager instance;
     public static Dictionary<int, DayData> dayDatas;
-    private static string path = Application.persistentDataPath + "db.file";
+    private static string path;
     private static BinaryFormatter formatter;
     private static bool locAccess;
     
 
-    public static void SetUpLocalDataManager()
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            path = Application.persistentDataPath + "db.file";
+            setUp();
+            foreach (KeyValuePair<int, DayData> day in LocalDataManager.dayDatas)
+            {
+                Debug.Log(day.Value.ToString() + "at initDB");
+
+            }
+        }
+        
+
+    }
+
+    private void OnApplicationQuit()
+    {
+        LocalDataManager.SaveLocally();
+    }
+
+    private void setUp() 
     {
 
         if(formatter != null)
@@ -27,8 +53,8 @@ public static class LocalDataManager
 
         Debug.Log("reached 1here");
 
-        //if (File.Exists(path)) mocking allways new pull from db
-        if(false)
+        if (File.Exists(path)) //mocking allways new pull from db
+        //if(false)
         {
             Debug.Log("read from local file");
             FileStream stream = File.OpenRead(path);
@@ -75,7 +101,7 @@ public static class LocalDataManager
 
         Debug.Log("added");
         DayData day =  AddData(eTimeCode, snapDataDict);
-        AddWeather(eTimeCode);
+        instance.AddWeather(eTimeCode);
     }
 
     
@@ -139,7 +165,7 @@ public static class LocalDataManager
     /**
      * can so far only fetch weather for today
      */
-    public static void AddWeather(int timestamp)
+    public void AddWeather(int timestamp)
     {
         Dictionary<string, string> dict;
         if (!locAccess)
@@ -152,7 +178,7 @@ public static class LocalDataManager
         }
         Debug.Log("trying to fetch weather data for " + timestamp);
         //if(DayData.getNormTimestamp(timestamp) == DayData.getNormTimeToday())
-        if(false)
+        if (false)
         {
             StaticWeatherManager.FetchWeatherDataNow((dict) =>
             {
@@ -170,12 +196,13 @@ public static class LocalDataManager
                 Debug.Log(debugLog);
 
             }
-            ); 
+            );
         }
         else
         {
-            StaticWeatherManager.FetchWeatherHistory(timestamp, (dict) =>
-            {
+            StartCoroutine(
+                StaticWeatherManager.FetchWeatherHistory(timestamp, (dict) =>
+                { 
                 Debug.Log("added weather data" + timestamp);
                 AddData(timestamp, dict);
                 string debugLog = "weather for timestamp";
@@ -185,7 +212,8 @@ public static class LocalDataManager
                 }
 
                 Debug.Log(debugLog);
-            });
+            })
+            );
             
             
 
@@ -194,4 +222,6 @@ public static class LocalDataManager
         
 
     }
+
+    
 }
