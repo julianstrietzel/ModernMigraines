@@ -10,7 +10,9 @@ using Firebase.Database;
 
 public class FactorTracker : MonoBehaviour
 {
-    public int PersonalRisk;
+    //Personal and General Risk both range from 0 to 100.
+
+    public int PersonalRisk;    // PersonalRisk = -1 if not enough information is available yet
     public int generalRisk;
 
     int mAverageTemp;
@@ -46,14 +48,23 @@ public class FactorTracker : MonoBehaviour
         int averagePressureChange = 0;
         int averageHumidityChange = 0;
 
+        mAverageTemp = 0;
+        mAveragePressure = 0;
+        mAverageHumidity = 0;
+        mAverageTempChange = 0;
+        mAveragePressureChange = 0;
+        mAverageHumidityChange = 0;
+
         private int prevTemp;
-    private int prevPressure;
-    private int prevHumidity;
-    private int dayCount = 0;
+        private int prevPressure;
+        private int prevHumidity;
+        private int dayCount = 0;
+        private int mDayCount = 0;
 
         //Iterate over all DayData objects
         foreach (KeyValuePair<int, DayData> dd in dayDatas)
         {
+
             dayCount++;
             averageTemp += dd.Value.temp_max;
             averagePressure += dd.Value.pressure;
@@ -65,42 +76,51 @@ public class FactorTracker : MonoBehaviour
                 averageHumidityChange += Math.Abs(dd.humidity - prevHumidity);
             }
 
+            //Update migraine day values
+            if (dd.Value.migraine)
+            {
+                mDayCount++;
+                mAverageTemp += dd.Value.temp_max;
+                mAveragePressure += dd.Value.pressure;
+                mAverageHumidity += dd.Value.humidity;
+
+                if (dayCount != 1)
+                {
+                    mAverageTempChange += Math.Abs(dd.temp_max - prevTemp);
+                    mAveragePressureChange += Math.Abs(dd.pressure - prevPressure);
+                    mAverageHumidityChange += Math.Abs(dd.humidity - prevHumidity);
+                }
+
+            }
+
+
             prevTemp = dd.Value.temp_max;
             prevPressure = dd.Value.pressure;
             prevHumidity = dd.Value.humidity;
+
         }
 
-        averageTemp /= dayCount;
-        averagePressure /= dayCount;
-        averageHumidity /= dayCount;
+        if (dayCount != 0) {
+            averageTemp /= dayCount;
+            averagePressure /= dayCount;
+            averageHumidity /= dayCount;
+            averageTempChange /= dayCount;
+            averagePressureChange /= dayCount;
+            averageHumidityChange /= dayCount;
+        }
+
+        if (mDayCount != 0) {
+            mAverageTemp /= mDayCount;
+            mAveragePressure /= mDayCount;
+            mAverageHumidity /= mDayCount;
+            mAverageTempChange /= mDayCount;
+            mAveragePressureChange /= mDayCount;
+            mAverageHumidityChange /= mDayCount;
+        }
 
 
-
-
-
-tempToday = 0;
-        int tempYesterday = 0;
-        humidityToday = 0;
-        int humidityYesterday = 0;
-        pressureToday = 0;
-        int pressureYesterday = 0;
-        pressureChange = pressureToday - pressureYesterday;
-        if(pressureChange < 0) { pressureChange *= -1; }
-        tempChange = tempToday - tempYesterday;
-        if(tempChange < 0) { tempChange *= -1; }
-        humidityChange = humidityToday - humidityYesterday;
-        if(humidityChange < 0) { humidityChange *= -1; }
-
-
-        mAverageTemp = 0;
-        mAveragePressure = 0;
-        mAverageHumidity = 0;
-        mAverageTempChange = 0;
-        mAveragePressureChange = 0;
-        mAverageHumidityChange = 0;
-
-        int days = 0;
-        int migraineDays = 0;
+        int days = dayCount;
+        int migraineDays = mDayCount;
         //*******************************************************//
         //Everything above here is accessed from sensors/database//
         //*******************************************************//
@@ -195,7 +215,7 @@ tempToday = 0;
         //Examine Personal Risk
         if(days < 14 || migraineDays < 5 || totalFlags == 0)
         {
-            //TODO: Notfiy user that personal risk assessment is unavailable
+            PersonalRisk = -1;
         }
         else
         {
@@ -212,13 +232,14 @@ tempToday = 0;
             if(flagPressureChange && pressureChangeOff)
                 flagsTriggered++;
 
-            //TODO: Notify User of their personal risk of a migraine today
+
             //Personal Risk depends on amount of flags triggered compared to total flags
-            PersonalRisk = flagsTriggered / totalFlags;
+            PersonalRisk = (100 * flagsTriggered) / totalFlags;
         }
 
         //Examine General Risk Today
         generalRisk = 0;
+        private int totalFacts = 6;
         if (tempOff)
             generalRisk++;
         if (humidityOff)
@@ -232,42 +253,9 @@ tempToday = 0;
         if (pressureChangeOff)
             generalRisk++;
 
-        //TODO: Notfiy User of the general risk today
+        generalRisk = (100 * generalRisk) / totalFacts;
+
 
     }
 
-    // Update is called once per frame
-    public void updateMigraineData()
-    {
-        //When User reports or unreports migraine
-        //TODO: Signal when migraine is reported
-        if (migraineReported)
-        {
-            mAverageTemp = ((mAverageTemp * migraineDays) + tempToday) / (migraineDays + 1);
-            mAverageHumidity = ((mAverageHumidity * migraineDays) + humidityToday) / (migraineDays + 1);
-            mAveragePressure = ((mAveragePressure * migraineDays) + pressureToday) / (migraineDays + 1);
-            mAverageTempChange = ((mAverageTempChange * migraineDays) + tempChange) / (migraineDays + 1);
-            mAveragePressureChange = ((mAveragePressureChange * migraineDays) + pressureChange) / (migraineDays + 1);
-            mAverageHumidityChange = ((mAverageHumidityChange * migraineDays) + humidityChange) / (migraineDays + 1);
-
-            migraineDays++;
-
-            //TODO: Update database with new mAverages
-        }
-
-        //TODO: Signal when migraine is unreported
-        if (migraineUnreported)
-        {
-            mAverageTemp = ((mAverageTemp * migraineDays) - tempToday) / (migraineDays - 1);
-            mAverageHumidity = ((mAverageHumidity * migraineDays) - humidityToday) / (migraineDays - 1);
-            mAveragePressure = ((mAveragePressure * migraineDays) - pressureToday) / (migraineDays - 1);
-            mAverageTempChange = ((mAverageTempChange * migraineDays) - tempChange) / (migraineDays - 1);
-            mAveragePressureChange = ((mAveragePressureChange * migraineDays) - pressureChange) / (migraineDays - 1);
-            mAverageHumidityChange = ((mAverageHumidityChange * migraineDays) - humidityChange) / (migraineDays - 1);
-
-            migraineDays--;
-
-            //TODO: Update database with new mAverages
-        }
-    }
 }
