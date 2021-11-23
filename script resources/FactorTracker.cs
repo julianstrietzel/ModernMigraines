@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System;
 using UnityEngine;
 using Unity.Mathematics;
 using System;
+using Firebase.Database;
 
 public class FactorTracker : MonoBehaviour
 {
+    public int PersonalRisk;
+    public int generalRisk;
 
     int mAverageTemp;
     int mAveragePressure;
@@ -28,12 +34,51 @@ public class FactorTracker : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    public void getRisk()
     {
         //TODO: Read data from database(Days tracked, average)
         //TODO: Read data from sensors
 
-        tempToday = 0;
+        int averageTemp = 0;
+        int averagePressure = 0;
+        int averageHumidity = 0;
+        int averageTempChange = 0;
+        int averagePressureChange = 0;
+        int averageHumidityChange = 0;
+
+        private int prevTemp;
+    private int prevPressure;
+    private int prevHumidity;
+    private int dayCount = 0;
+
+        //Iterate over all DayData objects
+        foreach (KeyValuePair<int, DayData> dd in dayDatas)
+        {
+            dayCount++;
+            averageTemp += dd.Value.temp_max;
+            averagePressure += dd.Value.pressure;
+            averageHumidity += dd.Value.humidity;
+
+            if(dayCount != 1){
+                averageTempChange += Math.Abs(dd.temp_max - prevTemp);
+                averagePressureChange += Math.Abs(dd.pressure - prevPressure);
+                averageHumidityChange += Math.Abs(dd.humidity - prevHumidity);
+            }
+
+            prevTemp = dd.Value.temp_max;
+            prevPressure = dd.Value.pressure;
+            prevHumidity = dd.Value.humidity;
+        }
+
+        averageTemp /= dayCount;
+        averagePressure /= dayCount;
+        averageHumidity /= dayCount;
+
+
+
+
+
+tempToday = 0;
         int tempYesterday = 0;
         humidityToday = 0;
         int humidityYesterday = 0;
@@ -46,12 +91,6 @@ public class FactorTracker : MonoBehaviour
         humidityChange = humidityToday - humidityYesterday;
         if(humidityChange < 0) { humidityChange *= -1; }
 
-        int averageTemp = 0;
-        int averagePressure = 0;
-        int averageHumidity = 0;
-        int averageTempChange = 0;
-        int averagePressureChange = 0;
-        int averageHumidityChange = 0;
 
         mAverageTemp = 0;
         mAveragePressure = 0;
@@ -175,11 +214,11 @@ public class FactorTracker : MonoBehaviour
 
             //TODO: Notify User of their personal risk of a migraine today
             //Personal Risk depends on amount of flags triggered compared to total flags
-            int PersonalRisk = flagsTriggered / totalFlags;
+            PersonalRisk = flagsTriggered / totalFlags;
         }
 
         //Examine General Risk Today
-        int generalRisk = 0;
+        generalRisk = 0;
         if (tempOff)
             generalRisk++;
         if (humidityOff)
@@ -198,7 +237,7 @@ public class FactorTracker : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void updateMigraineData()
     {
         //When User reports or unreports migraine
         //TODO: Signal when migraine is reported
