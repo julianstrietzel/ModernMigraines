@@ -63,9 +63,9 @@ public class FactorTracker
 
             if (dayCount != 1)
             {
-                averageTempChange += Math.Abs(dd.temp_max - prevTemp);
-                averagePressureChange += Math.Abs(dd.pressure - prevPressure);
-                averageHumidityChange += Math.Abs(dd.humidity - prevHumidity);
+                averageTempChange += Math.Abs(day.Value.temp_max - prevTemp);
+                averagePressureChange += Math.Abs(day.Value.pressure - prevPressure);
+                averageHumidityChange += Math.Abs(day.Value.humidity - prevHumidity);
             }
 
             //Update migraine day values
@@ -78,9 +78,9 @@ public class FactorTracker
 
                 if (dayCount != 1)
                 {
-                    mAverageTempChange += Math.Abs(dd.temp_max - prevTemp);
-                    mAveragePressureChange += Math.Abs(dd.pressure - prevPressure);
-                    mAverageHumidityChange += Math.Abs(dd.humidity - prevHumidity);
+                    mAverageTempChange += Math.Abs(day.Value.temp_max - prevTemp);
+                    mAveragePressureChange += Math.Abs(day.Value.pressure - prevPressure);
+                    mAverageHumidityChange += Math.Abs(day.Value.humidity - prevHumidity);
                 }
 
             }
