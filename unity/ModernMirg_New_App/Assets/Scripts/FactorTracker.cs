@@ -32,28 +32,28 @@ public class FactorTracker
     public void updateRisks()
     {
 
-        int averageTemp = 0;
-        int averagePressure = 0;
-        int averageHumidity = 0;
-        int averageTempChange = 0;
-        int averagePressureChange = 0;
-        int averageHumidityChange = 0;
+        float averageTemp = 0;
+        float averagePressure = 0;
+        float averageHumidity = 0;
+        float averageTempChange = 0;
+        float averagePressureChange = 0;
+        float averageHumidityChange = 0;
 
-        int mAverageTemp = 0;
-        int mAveragePressure = 0;
-        int mAverageHumidity = 0;
-        int mAverageTempChange = 0;
-        int mAveragePressureChange = 0;
-        int mAverageHumidityChange = 0;
+        float mAverageTemp = 0;
+        float mAveragePressure = 0;
+        float mAverageHumidity = 0;
+        float mAverageTempChange = 0;
+        float mAveragePressureChange = 0;
+        float mAverageHumidityChange = 0;
 
-        int prevTemp;
-        int prevPressure;
-        int prevHumidity;
+        float prevTemp = 0;
+        float prevPressure = 0;
+        float prevHumidity = 0;
         int dayCount = 0;
         int mDayCount = 0;
 
     //Iterate over all DayData objects
-        foreach (KeyValuePair<int, DayData> day in dayDatas)
+        foreach (KeyValuePair<int, DayData> day in LocalDataManager.dayDatas)
         {
 
             dayCount++;
@@ -61,11 +61,11 @@ public class FactorTracker
             averagePressure += day.Value.pressure;
             averageHumidity += day.Value.humidity;
 
-            if (dayCount != 1)
+            if (dayCount <= 1)
             {
-                averageTempChange += Math.Abs(dd.temp_max - prevTemp);
-                averagePressureChange += Math.Abs(dd.pressure - prevPressure);
-                averageHumidityChange += Math.Abs(dd.humidity - prevHumidity);
+                averageTempChange += Math.Abs(day.Value.temp_max - prevTemp);
+                averagePressureChange += Math.Abs(day.Value.pressure - prevPressure);
+                averageHumidityChange += Math.Abs(day.Value.humidity - prevHumidity);
             }
 
             //Update migraine day values
@@ -78,9 +78,9 @@ public class FactorTracker
 
                 if (dayCount != 1)
                 {
-                    mAverageTempChange += Math.Abs(dd.temp_max - prevTemp);
-                    mAveragePressureChange += Math.Abs(dd.pressure - prevPressure);
-                    mAverageHumidityChange += Math.Abs(dd.humidity - prevHumidity);
+                    mAverageTempChange += Math.Abs(day.Value.temp_max - prevTemp);
+                    mAveragePressureChange += Math.Abs(day.Value.pressure - prevPressure);
+                    mAverageHumidityChange += Math.Abs(day.Value.humidity - prevHumidity);
                 }
 
             }
@@ -113,16 +113,29 @@ public class FactorTracker
 
         int days = dayCount;
         int migraineDays = mDayCount;
+
+
+        //Current Day:
+
+        DayData today = LocalDataManager.GetToday();
+        DayData yest = LocalDataManager.GetDay(DayData.GetUnixTime() - 86400);
+        float tempToday = today.temp_max;
+        float pressureToday = today.pressure;
+        float humidityToday = today.humidity;
+        float tempChange = Math.Abs(tempToday - yest.temp_max);
+        float pressureChange = Math.Abs(pressureToday - yest.pressure);
+        float humidityChange = Math.Abs(humidityToday - yest.humidity);
+
         //*******************************************************//
         //Everything above here is accessed from sensors/database//
         //*******************************************************//
 
-        int tempDiff = averageTemp - mAverageTemp;
-        int pressureDiff = averagePressure - mAveragePressure;
-        int humidityDiff = averageHumidity - mAverageHumidity;
-        int tempChangeDiff = averageTempChange - mAverageTempChange;
-        int pressureChangeDiff = averagePressureChange - mAveragePressureChange;
-        int humidityChangeDiff = averageHumidityChange - mAverageHumidityChange;
+        float tempDiff = averageTemp - mAverageTemp;
+        float pressureDiff = averagePressure - mAveragePressure;
+        float humidityDiff = averageHumidity - mAverageHumidity;
+        float tempChangeDiff = averageTempChange - mAverageTempChange;
+        float pressureChangeDiff = averagePressureChange - mAveragePressureChange;
+        float humidityChangeDiff = averageHumidityChange - mAverageHumidityChange;
 
         if(humidityChangeDiff < 0) { humidityChangeDiff *= -1; }
         if (tempChangeDiff < 0) { tempChangeDiff *= -1; }
@@ -141,15 +154,6 @@ public class FactorTracker
         bool flagHumidityChange = false;
         bool flagPressure = false;
         bool flagPressureChange = false;
-
-        //Update Averages and days
-        averageTemp = ((averageTemp * days) + tempToday) / (days + 1);
-        averagePressure = ((averagePressure * days) + pressureToday) / (days + 1);
-        averageHumidity = ((averageHumidity * days) + humidityToday) / (days + 1);
-        averageTempChange = ((averageTempChange * days) + tempChange) / (days + 1);
-        averagePressureChange = ((averagePressureChange * days) + pressureChange) / (days + 1);
-        averageHumidityChange = ((averageHumidityChange * days) + humidityChange) / (days + 1);
-        days++;
 
         //Find difference in todays data vs the average day
         bool tempOff = false;
@@ -231,7 +235,7 @@ public class FactorTracker
 
         //Examine General Risk Today
         generalRisk = 0;
-        private int totalFacts = 6;
+        int totalFacts = 6;
         if (tempOff)
             generalRisk++;
         if (humidityOff)
