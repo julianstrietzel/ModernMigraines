@@ -12,7 +12,7 @@ public class ChangeSceneWithButton : MonoBehaviour
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
-        int time = DayData.getNormTimeToday();
+        int time = DayData.GetNormTimeToday();
         //TODO how can I read the slider value?
         //TODO This Code should only be run when changing from slider view to home
         DatabaseReference db = FirebaseDatabase.DefaultInstance.RootReference;

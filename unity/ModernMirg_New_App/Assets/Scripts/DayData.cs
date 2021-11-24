@@ -27,24 +27,24 @@ public class DayData
 
     public DayData()
     {
-        this.timestamp = getNormTimeToday();
+        this.timestamp = GetNormTimeToday();
     }
 
 
     public DayData(int unixTimestemp)
     {
-        this.timestamp = getNormTimestamp(unixTimestemp);
+        this.timestamp = GetNormTimestamp(unixTimestemp);
     }
 
     public DayData(Dictionary<string, string> data)
     {
-        this.timestamp = getNormTimestamp(GetUnixTime());
+        this.timestamp = GetNormTimestamp(GetUnixTime());
         SetData(data);
     }
 
     public DayData(int unixTimestemp, Dictionary<string, string> data)
     {
-        this.timestamp = getNormTimestamp(unixTimestemp);
+        this.timestamp = GetNormTimestamp(unixTimestemp);
         SetData(data);
     }
 
@@ -54,7 +54,7 @@ public class DayData
         int resIntTimestamp;
         if(data.TryGetValue("timestamp", out restimestamp)) {
             int.TryParse(restimestamp, out resIntTimestamp);
-            timestamp = getNormTimestamp(timestamp);
+            timestamp = GetNormTimestamp(timestamp);
         }
         string resstepcount;
         if (data.TryGetValue("stepcount", out resstepcount))
@@ -105,14 +105,19 @@ public class DayData
 
     }
 
-    public static int getNormTimestamp(int timestamp)
+    public static int GetNormTimestamp(int timestamp)
     {
         return timestamp - timestamp % (24 * 60 * 60 * 1) + (12 * 60 * 60 * 1);
     }
 
-    public static int getNormTimeToday()
+    public static int GetNormTimeToday()
     {
-        return getNormTimestamp(GetUnixTime());
+        return GetNormTimestamp(GetUnixTime());
+    }
+
+    public static int GetLocalTime()
+    {
+        return GetUnixTime() - 8 * 60 * 60;
     }
 
     public static int GetUnixTime()
@@ -122,12 +127,12 @@ public class DayData
 
     public static int GetUnixTimeDaysAgo(int days)
     {
-        return getNormTimestamp(GetUnixTime()) - days * (24 * 60 * 60);
+        return GetNormTimestamp(GetUnixTime()) - days * (24 * 60 * 60);
     }
 
-    public bool equals(DayData other)
+    public bool Equals(DayData other)
     {
-        return (getNormTimestamp(this.timestamp) == getNormTimestamp(other.timestamp));
+        return (GetNormTimestamp(this.timestamp) == GetNormTimestamp(other.timestamp));
     }
 
     public

@@ -10,7 +10,8 @@ using Firebase.Database;
 
 public class FactorTracker
 {
-    //Personal and General Risk both range from 0 to 100.
+    /**
+    Personal and General Risk both range from 0 to 100.
 
     private int PersonalRisk;    // PersonalRisk = -1 if not enough information is available yet
     private int generalRisk;
@@ -113,10 +114,11 @@ public class FactorTracker
 
         int days = dayCount;
         int migraineDays = mDayCount;
+    **/
         //*******************************************************//
         //Everything above here is accessed from sensors/database//
         //*******************************************************//
-
+        /**
         int tempDiff = averageTemp - mAverageTemp;
         int pressureDiff = averagePressure - mAveragePressure;
         int humidityDiff = averageHumidity - mAverageHumidity;
@@ -249,5 +251,6 @@ public class FactorTracker
 
 
     }
+        **/
 
 }

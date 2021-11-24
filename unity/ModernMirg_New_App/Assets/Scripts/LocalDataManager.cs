@@ -13,7 +13,7 @@ public class LocalDataManager : MonoBehaviour
     //use GetData with unix timestamp of a day to acces DayData Object for that day
     //U can also use the public dayDatas Dict to iterate over all the data to calc stuff (averages)
 
-    public static LocalDataManager instance;
+    public static LocalDataManager instance = null;
     public static Dictionary<int, DayData> dayDatas;
     private static string path;
     private static BinaryFormatter formatter;
@@ -23,6 +23,7 @@ public class LocalDataManager : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("Local Time is " + DateTime.FromFileTimeUtc(DayData.GetLocalTime()) + " " + DayData.GetLocalTime());
         if (instance == null)
         {
             instance = this;
@@ -58,8 +59,8 @@ public class LocalDataManager : MonoBehaviour
 
         Debug.Log("reached 1here");
 
-        if (File.Exists(path)) //mocking allways new pull from db
-        //if(false)
+        //if (File.Exists(path)) //mocking allways new pull from db
+        if(false)
         {
             Debug.Log("read from local file");
             FileStream stream = File.OpenRead(path);
@@ -118,19 +119,33 @@ public class LocalDataManager : MonoBehaviour
     //TODO to be implemented
     private void AddHealth(int timestamp)
     {
-        DateTimeOffset end = DateTimeOffset.FromUnixTimeSeconds(timestamp + 8 * 60 * 60); //timeshift to sd
+        DateTimeOffset end = DateTimeOffset.FromUnixTimeSeconds(timestamp - 8 * 60 * 60); //timeshift to sd
         DateTimeOffset begin = end.AddDays(-1);
+        //Debug.Log("date given from " + timestamp + " is end" + end.ToString());
 
 
         void ProcessData(List<QuantitySample> samples, Error e)
         {
-            Debug.Log(e.ToString());
+            if (!(e is null))
+            {
+                Debug.Log(e.ToString());
+            }
+            //Debug.Log(String.Format(" - {0} from {1} to {2}", sample.quantity.doubleValue, sample.startDate, sample.endDate));
+            double stepcount = 0;
+            string date = null;
             foreach (QuantitySample sample in samples)
             {
-                Debug.Log(String.Format(" - {0} from {1} to {2}", sample.quantity.doubleValue, sample.startDate, sample.endDate));
+                stepcount += sample.quantity.doubleValue;
+                if (date is null)
+                {
+                    date = sample.startDate.ToString();
+                }
             }
+            Debug.Log(String.Format(stepcount + " steps at this date " + date ));
+
         }
 
+        //TODO for example data gives the wrong day stepcount 
         healthStore.ReadQuantitySamples(HKDataType.HKQuantityTypeIdentifierStepCount, begin, end, new ReceivedHealthData<List<QuantitySample>, Error>(ProcessData));
 
     }
@@ -147,7 +162,7 @@ public class LocalDataManager : MonoBehaviour
 
     public static DayData GetToday()
     {
-        return GetDay(DayData.GetUnixTime());
+        return GetDay(DayData.GetLocalTime());
     }
 
 
@@ -155,7 +170,7 @@ public class LocalDataManager : MonoBehaviour
     public static DayData GetDay(int timestamp)
     {
         DayData res;
-        int normTime = DayData.getNormTimestamp(timestamp);
+        int normTime = DayData.GetNormTimestamp(timestamp);
         if (!dayDatas.TryGetValue(normTime, out res))
         {
             res = new DayData(timestamp);
@@ -166,7 +181,7 @@ public class LocalDataManager : MonoBehaviour
 
     public static DayData AddData(int timestamp, Dictionary<string, string> data)
     {
-        timestamp = DayData.getNormTimestamp(timestamp);
+        timestamp = DayData.GetNormTimestamp(timestamp);
         DayData day;
         if (dayDatas.TryGetValue(timestamp, out day))
         {
@@ -188,7 +203,7 @@ public class LocalDataManager : MonoBehaviour
 
     public static DayData AddDataForToday(Dictionary<string, string> data)
     {
-        return AddData(DayData.getNormTimeToday(), data);
+        return AddData(DayData.GetNormTimeToday(), data);
     }
 
     /**
@@ -204,10 +219,10 @@ public class LocalDataManager : MonoBehaviour
         {
             return;
         }
-        int timestamp = DayData.getNormTimestamp(ptimestamp);
+        int timestamp = DayData.GetNormTimestamp(ptimestamp);
         Debug.Log("trying to fetch weather data for " + ptimestamp + "being norm " + timestamp);
 
-        if (timestamp == DayData.getNormTimeToday())
+        if (timestamp == DayData.GetNormTimeToday())
         //if (false)
         {
             StaticWeatherManager.FetchWeatherDataNow((dict) =>
