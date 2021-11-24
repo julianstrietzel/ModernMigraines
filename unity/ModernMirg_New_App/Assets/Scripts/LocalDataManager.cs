@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using Firebase.Database;
+using BeliefEngine.HealthKit;
 
 using System.Collections;
 using System;
@@ -17,7 +18,8 @@ public class LocalDataManager : MonoBehaviour
     private static string path;
     private static BinaryFormatter formatter;
     private static bool locAccess;
-    
+    private HealthStore healthStore;
+    private HealthKitDataTypes dataTypes;
 
     private void Awake()
     {
@@ -26,9 +28,16 @@ public class LocalDataManager : MonoBehaviour
             instance = this;
             path = Application.persistentDataPath + "db.file";
             setUp();
-            
+
         }
-        
+
+        AuthorizeHealthKit();
+
+        void AuthorizeHealthKit()
+        {
+            this.healthStore = this.GetComponent<HealthStore>();
+            this.healthStore.Authorize(this.dataTypes);
+        }
 
     }
 
@@ -103,9 +112,28 @@ public class LocalDataManager : MonoBehaviour
         DayData day =  AddData(eTimeCode, snapDataDict);
         Debug.Log(day.timestamp + "added or changed from db in LocalDM");
         instance.AddWeather(eTimeCode);
+        instance.AddHealth(eTimeCode);
     }
 
-    
+    //TODO to be implemented
+    private void AddHealth(int timestamp)
+    {
+        DateTimeOffset end = DateTimeOffset.FromUnixTimeSeconds(timestamp + 8 * 60 * 60); //timeshift to sd
+        DateTimeOffset begin = end.AddDays(-1);
+
+
+        void ProcessData(List<QuantitySample> samples, Error e)
+        {
+            Debug.Log(e.ToString());
+            foreach (QuantitySample sample in samples)
+            {
+                Debug.Log(String.Format(" - {0} from {1} to {2}", sample.quantity.doubleValue, sample.startDate, sample.endDate));
+            }
+        }
+
+        healthStore.ReadQuantitySamples(HKDataType.HKQuantityTypeIdentifierStepCount, begin, end, new ReceivedHealthData<List<QuantitySample>, Error>(ProcessData));
+
+    }
 
     public static void SaveLocally()
     {
