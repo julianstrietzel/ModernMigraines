@@ -132,9 +132,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 101459580}
-  - component: {fileID: 101459579}
   - component: {fileID: 101459582}
   - component: {fileID: 101459581}
+  - component: {fileID: 101459579}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 101459578}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76044d53ff3ac426d916b0960fac5642, type: 3}
+  m_Script: {fileID: 11500000, guid: 66a3a00a031c76443861f2ae7d9da4fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &101459580
@@ -279,7 +279,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 101459579}
         m_TargetAssemblyTypeName: ChangeSceneWithButton, Assembly-CSharp
         m_MethodName: LoadScene
         m_Mode: 5
@@ -495,7 +495,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 101459579}
         m_TargetAssemblyTypeName: ChangeSceneWithButton, Assembly-CSharp
         m_MethodName: LoadScene
         m_Mode: 5
@@ -694,7 +694,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 101459579}
         m_TargetAssemblyTypeName: ChangeSceneWithButton, Assembly-CSharp
         m_MethodName: LoadScene
         m_Mode: 5
