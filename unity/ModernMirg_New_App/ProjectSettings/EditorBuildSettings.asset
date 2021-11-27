@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
+    path: 
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
     path: Assets/Scenes/HaveMigrain e.unity
@@ -23,6 +23,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DailyData.unity
     guid: be2fafff9f3e74b7fa51eff82d33303f
+  - enabled: 1
+    path: Assets/Scenes/DisplayDayData.unity
+    guid: 4c4745daec5774f0e91bd26d5092cbf8
   - enabled: 1
     path: Assets/Scenes/HistoryOverview.unity
     guid: 59a6c0278b7354badbc3aa3c3bc0bb31

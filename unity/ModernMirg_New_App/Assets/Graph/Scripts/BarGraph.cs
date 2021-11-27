@@ -18,7 +18,7 @@ public class BarGraph : MonoBehaviour {
 
         //int widthInPoints = RectTransform.Width;
         //GameObject gameObject;
-        int width = 10;
+        int width = 100;
         int height = 90;
         int percentage = 10;
         //gameObject.rectTransform.sizeDelta = new Vector2(width, height);

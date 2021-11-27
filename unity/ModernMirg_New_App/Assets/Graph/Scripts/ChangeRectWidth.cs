@@ -24,6 +24,8 @@ public class ChangeRectWidth : MonoBehaviour
         backgroundPers = GameObject.Find("backgroundPers");
         backgroundPersRect = backgroundPers.GetComponent<RectTransform>();
         backgroundPersRect.sizeDelta = new Vector2(90, backgroundPersRect.sizeDelta.y);
+        var perRenderer = backgroundPers.GetComponent<MeshRenderer>();
+        perRenderer.materials[0].color = Color.blue;
     }
 
     // Update is called once per frame
