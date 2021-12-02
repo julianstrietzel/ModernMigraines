@@ -5,7 +5,6 @@ using UnityEngine;
 using Firebase.Database;
 using BeliefEngine.HealthKit;
 
-using System.Collections;
 using System;
 
 public class LocalDataManager : MonoBehaviour
@@ -28,6 +27,7 @@ public class LocalDataManager : MonoBehaviour
         {
             instance = this;
             path = Application.persistentDataPath + "db.file";
+            Debug.Log(path);
             setUp();
 
         }
@@ -37,14 +37,17 @@ public class LocalDataManager : MonoBehaviour
         void AuthorizeHealthKit()
         {
             this.healthStore = this.GetComponent<HealthStore>();
+
             this.healthStore.Authorize(this.dataTypes);
         }
+
+        DontDestroyOnLoad(this.gameObject);
 
     }
 
     private void OnApplicationQuit()
     {
-        LocalDataManager.SaveLocally();
+        //LocalDataManager.SaveLocally();
     }
 
     private void setUp() 
@@ -59,7 +62,7 @@ public class LocalDataManager : MonoBehaviour
 
         Debug.Log("reached 1here");
 
-        //if (File.Exists(path)) //mocking allways new pull from db
+        //if (File.Exists(path)) //for mocking allways new pull from db
         if(false)
         {
             Debug.Log("read from local file");
@@ -141,7 +144,12 @@ public class LocalDataManager : MonoBehaviour
                     date = sample.startDate.ToString();
                 }
             }
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+            dict.Add(timestamp.ToString(), stepcount.ToString());
+            AddData(timestamp, dict);
+
             Debug.Log(String.Format(stepcount + " steps at this date " + date ));
+            FirebaseDatabase.DefaultInstance.RootReference.Child(date.ToString()).Child("steps").SetValueAsync(stepcount.ToString());
 
         }
 
