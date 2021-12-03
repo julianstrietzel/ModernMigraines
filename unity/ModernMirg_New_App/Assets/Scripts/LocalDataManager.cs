@@ -138,12 +138,14 @@ public class LocalDataManager : MonoBehaviour
             string date = null;
             foreach (QuantitySample sample in samples)
             {
+
                 stepcount += sample.quantity.doubleValue;
                 if (date is null)
                 {
                     date = sample.startDate.ToString();
                 }
             }
+
             Dictionary<string, string> dict = new Dictionary<string, string>();
             dict.Add(timestamp.ToString(), stepcount.ToString());
             AddData(timestamp, dict);
