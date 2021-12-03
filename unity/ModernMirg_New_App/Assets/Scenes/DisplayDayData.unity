@@ -639,6 +639,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33c8438bd0db545aeab715227e91d9a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  today:
+    timestamp: 1638532800
+    hasWeather: 0
+    stepcount: 0
+    migraine: 0
+    severity: 0
+    symptoms: 0
+    temp_min: -Infinity
+    temp_max: -Infinity
+    pressure: -Infinity
+    humidity: -Infinity
   textMesh: {fileID: 1300729466}
 --- !u!1 &1520147097
 GameObject:
@@ -717,6 +728,7 @@ GameObject:
   - component: {fileID: 1916256091}
   - component: {fileID: 1916256093}
   - component: {fileID: 1916256092}
+  - component: {fileID: 1916256094}
   m_Layer: 5
   m_Name: Info
   m_TagString: Untagged
@@ -840,6 +852,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1916256090}
   m_CullTransparentMesh: 1
+--- !u!114 &1916256094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916256090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33c8438bd0db545aeab715227e91d9a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  today:
+    timestamp: 1638532800
+    hasWeather: 0
+    stepcount: 0
+    migraine: 0
+    severity: 0
+    symptoms: 0
+    temp_min: -Infinity
+    temp_max: -Infinity
+    pressure: -Infinity
+    humidity: -Infinity
+  textMesh: {fileID: 1300729466}
 --- !u!1 &1953625980
 GameObject:
   m_ObjectHideFlags: 0

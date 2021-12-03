@@ -10,7 +10,7 @@ using CodeMonkey.Utils;
 public class BarGraph : MonoBehaviour {
 
     private RectTransform graphContainer;
-    public GameObject gameObject;
+    public GameObject other_gameObject;
 
     private void Start() {
         //graphContainer = transform.Find("graphContainer").GetComponent<RectTransform>();

@@ -13,9 +13,11 @@ public class LocalDataManager : MonoBehaviour
     //use GetData with unix timestamp of a day to acces DayData Object for that day
     //U can also use the public dayDatas Dict to iterate over all the data to calc stuff (averages)
 
+    public static LocalDataManager instancereal;
     public static LocalDataManager instance;
     public static Dictionary<int, DayData> dayDatas;
     private static string path;
+    public static FactorTracker fs;
     private static BinaryFormatter formatter;
     private static bool locAccess;
     private HealthStore healthStore;
@@ -25,20 +27,26 @@ public class LocalDataManager : MonoBehaviour
     {
         if (instance == null)
         {
-            instance = this;
+
+            instancereal = instance = this;
             path = Application.persistentDataPath + "db.file";
             setUp();
+            AuthorizeHealthKit();
+            fs = new FactorTracker();
+        
 
+        } else {
+            Destroy(this.gameObject);
         }
 
-        AuthorizeHealthKit();
-
+        
         void AuthorizeHealthKit()
         {
             this.healthStore = this.GetComponent<HealthStore>();
             this.healthStore.Authorize(this.dataTypes);
         }
-
+        
+        DontDestroyOnLoad(this.gameObject);
     }
 
     private void OnApplicationQuit()
@@ -58,11 +66,11 @@ public class LocalDataManager : MonoBehaviour
 
         Debug.Log("reached 1here");
 
-        if (File.Exists(path)) //mocking allways new pull from db
-        //if(false)
+        //if (File.Exists(path)) //mocking allways new pull from db
+        if(false)
         {
             Debug.Log("read from local file");
-            FileStream stream = File.OpenRead(path);
+            FileStream stream = File.OpenRead("no"); //should be path
             dayDatas = (Dictionary<int, DayData>)formatter.Deserialize(stream);
             stream.Close();
         }
@@ -124,10 +132,10 @@ public class LocalDataManager : MonoBehaviour
 
         void ProcessData(List<QuantitySample> samples, Error e)
         {
-            Debug.Log(e.ToString());
+            //Debug.Log(e.ToString());
             foreach (QuantitySample sample in samples)
             {
-                Debug.Log(String.Format(" - {0} from {1} to {2}", sample.quantity.doubleValue, sample.startDate, sample.endDate));
+                //Debug.Log(String.Format(" - {0} from {1} to {2}", sample.quantity.doubleValue, sample.startDate, sample.endDate));
             }
         }
 
@@ -137,10 +145,10 @@ public class LocalDataManager : MonoBehaviour
 
     public static void SaveLocally()
     {
-        FileStream stream = File.OpenWrite(path);
+        /*FileStream stream = File.OpenWrite(path);
         formatter.Serialize(stream, dayDatas);
         stream.Close();
-        Debug.Log("saved locally in LDM");
+        Debug.Log("saved locally in LDM");*/
     }
 
 

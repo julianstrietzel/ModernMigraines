@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using CodeMonkey.Utils;
+using static LocalDataManager;
+using System.Linq;
 
 public class GraphOfWindow : MonoBehaviour {
 
@@ -14,7 +16,25 @@ public class GraphOfWindow : MonoBehaviour {
     private void Awake() {
         graphContainer = transform.Find("graphContainer").GetComponent<RectTransform>();
 
-        List<int> valueList = new List<int>() { 5, 98, 56, 45, 30, 22, 17, 15, 13, 17, 25, 37, 40, 36, 33 };
+
+      GameObject o = GameObject.Find("JulianStuff");
+      o.GetComponent<LocalDataManager>();
+
+      List<KeyValuePair<int, DayData>> list = LocalDataManager.dayDatas.ToList();
+      List<KeyValuePair<int, DayData>> sortd = new List<KeyValuePair<int, DayData>>(list.OrderBy(kv => kv.Key));
+
+      List<int> valueList = new List<int>(){5, 98, 56, 45, 30, 22, 17};
+
+      int j = 1;
+      for (int i = 7; i --> 0; )
+        {
+            if(list.Count - j > 0)
+                valueList[i] = sortd[(list.Count - j)].Value.severity * 10;
+            
+            j = j+1;
+        }
+
+        //List<int> valueList = new List<int>() { 5, 98, 56, 45, 30, 22, 17, 15, 13, 17, 25, 37, 40, 36, 33 };
         ShowGraph(valueList);
     }
 
@@ -33,11 +53,11 @@ public class GraphOfWindow : MonoBehaviour {
     private void ShowGraph(List<int> valueList) {
         float graphHeight = graphContainer.sizeDelta.y;
         float yMaximum = 100f;
-        float xSize = 34.5f;
+        float xSize = 80.5f;
 
         GameObject lastCircleGameObject = null;
         for (int i = 0; i < valueList.Count; i++) {
-            float xPosition = xSize + i * xSize +22;
+            float xPosition = xSize + i * xSize -25;
             float yPosition = (valueList[i] / yMaximum) * graphHeight + 42;
             GameObject circleGameObject = CreateCircle(new Vector2(xPosition, yPosition));
             if (lastCircleGameObject != null) {

@@ -1,21 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using TMPro;
+using static LocalDataManager;
+using System.Linq;
  
 public class DisplayData : MonoBehaviour
 {
-   public FactorTracker factorTracker;
+
+   public DayData today;
    public TextMeshProUGUI textMesh;
-    
+
     void Start(){
 
+      GameObject o = GameObject.Find("JulianStuff");
+      o.GetComponent<LocalDataManager>();
+ 
+      List<KeyValuePair<int, DayData>> list = LocalDataManager.dayDatas.ToList();
+      List<KeyValuePair<int, DayData>> sortd = new List<KeyValuePair<int, DayData>>(list.OrderBy(kv => kv.Key));
 
-    	//was too out of it to remember the line Julian told me
-    	string info= "Sorry Julian I didn't write down what you told me :("; //some toString func
-		textMesh.text = info;
+      KeyValuePair<int, DayData> today = list[list.Count - 1];
+
+		  textMesh.text = today.Value.ToString();
 		return;
-	
+
     }
 
 

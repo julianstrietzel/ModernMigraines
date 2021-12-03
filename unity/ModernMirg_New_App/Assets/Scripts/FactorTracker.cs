@@ -8,13 +8,12 @@ using Unity.Mathematics;
 using System;
 using Firebase.Database;
 
-public class FactorTracker
+public class FactorTracker : MonoBehaviour
 {
     //Personal and General Risk both range from 0 to 100.
 
     private int PersonalRisk;    // PersonalRisk = -1 if not enough information is available yet
     private int generalRisk;
-
 
 
     public int getPersonalRisk()
@@ -31,7 +30,6 @@ public class FactorTracker
     // Updates the variables PersonalRisk and generalRisk
     public void updateRisks()
     {
-
         float averageTemp = 0;
         float averagePressure = 0;
         float averageHumidity = 0;
@@ -90,6 +88,12 @@ public class FactorTracker
             prevPressure = day.Value.pressure;
             prevHumidity = day.Value.humidity;
 
+        }
+
+        if(dayCount == 0){
+            PersonalRisk = -1;
+            generalRisk = -1;
+            return;
         }
 
         if (dayCount != 0) {

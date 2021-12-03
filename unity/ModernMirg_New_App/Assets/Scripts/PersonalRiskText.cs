@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using static LocalDataManager;
  
 public class PersonalRiskText : MonoBehaviour
 {
@@ -11,25 +12,26 @@ public class PersonalRiskText : MonoBehaviour
    public TextMeshProUGUI textMesh;
     
     void Start(){
+      GameObject o = GameObject.Find("JulianStuff");
+      o.GetComponent<LocalDataManager>();
+      
+      FactorTracker fs = LocalDataManager.fs;
+      fs.updateRisks();
 
-    	//dailyFactor = GameObject.Find("DailyFactor");
-    	//factorTracker = dailyFactor.Find("FactorTracker");
-        //factorTracker = GetComponent<FactorTracker>();
+      Debug.Log(LocalDataManager.fs.ToString());
+      Debug.Log(fs.getPersonalRisk());
+      personalRisk = fs.getPersonalRisk();
 
-    	
-    	//factorTracker.getPersonalRisk(); 
-    	//TODO
-    	//Find how to get var from classes w/o getting errors
-    	personalRisk = 5;
-
-
-    	if(personalRisk == -1)
-    		textMesh.text = "We're still gathering data to be able to predict your personal risk for getting a migraine";
-    	else
-			textMesh.text = "Your personal risk for getting a migraine today is " + personalRisk.ToString() + "%";
-		return;
-	
+      //Debug.Log(LocalDataManager.fs.ToString());
+      //Debug.Log(fs.getPersonalRisk());
+      personalRisk = fs.getPersonalRisk();
+      if(personalRisk > 0)
+        textMesh.text = "Your personal risk for getting a migraine today is " + personalRisk.ToString() + " %";
+      else
+        textMesh.text = "We're still getting enough data to be able to predict your migraine";
+    return;
+  
     }
-
+    
 
 }
