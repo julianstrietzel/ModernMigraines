@@ -50,12 +50,11 @@ public class SliderValueToText : MonoBehaviour {
     //get component LocalDataManager and DayData
     
     int timestamp = getNormTimeToday();
-    Debug.Log(timestamp + "here wea re");
-    Dictionary<string, string> dict = new Dictionary<string, string>();
-    dict.Add("timestamp", timestamp.ToString());
-    dict.Add("migraine", "true");
-    dict.Add("severity", GetSliderValue().ToString());
-    FirebaseDatabase.DefaultInstance.RootReference.Child("users/TEST_USER/" + timestamp.ToString()).SetValueAsync(dict);
-  }
-  
+    
+    FirebaseDatabase.DefaultInstance.RootReference.Child("users/TEST_USER/" + timestamp.ToString()).Child("migraine").SetValueAsync("true");
+    FirebaseDatabase.DefaultInstance.RootReference.Child("users/TEST_USER/" + timestamp.ToString()).Child("timestamp").SetValueAsync(timestamp.ToString());
+    FirebaseDatabase.DefaultInstance.RootReference.Child("users/TEST_USER/" + timestamp.ToString()).Child("severity").SetValueAsync(GetSliderValue().ToString());
+
+    }
+
 }

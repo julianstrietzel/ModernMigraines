@@ -7,13 +7,13 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 0
     path: 
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/Scenes/HaveMigrain e.unity
-    guid: 7b3438e9daf304a208dd6136ffb51f0a
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/Home.unity
     guid: 666ebfdcbf5ce42f0a9323b0f7654549
+  - enabled: 1
+    path: Assets/Scenes/HaveMigrain e.unity
+    guid: 7b3438e9daf304a208dd6136ffb51f0a
   - enabled: 1
     path: Assets/Scenes/RateMigraine.unity
     guid: d939bf4f72751438cbfcfc4c44d2c1a3
