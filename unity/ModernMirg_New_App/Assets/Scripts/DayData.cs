@@ -133,7 +133,8 @@ public class DayData
     public
     override string ToString()
     {
-        string output = timestamp + ": ";
+        //string output = timestamp + ": ";
+        string output = "";
         if(stepcount != 0)
         {
             output += " stepcount: " + stepcount;

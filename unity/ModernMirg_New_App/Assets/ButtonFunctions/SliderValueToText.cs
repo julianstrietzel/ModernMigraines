@@ -8,15 +8,11 @@ using Firebase.Database;
 
 public class SliderValueToText : MonoBehaviour {
   public Slider sliderUI;
-  private Text textSliderValue;
+  public Text textSliderValue;
   public Button button;
 
   void Start (){
-    textSliderValue = GetComponent<Text>();
     ShowSliderValue();
-
-    //Button btn = button.GetComponent<Button>();
-    //btn.onClick.AddListener(TaskOnClick);
   }
 
   public void ShowSliderValue () {

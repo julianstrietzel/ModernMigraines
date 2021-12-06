@@ -194,6 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sliderUI: {fileID: 2141802998}
+  textSliderValue: {fileID: 68701552}
   button: {fileID: 95733766}
 --- !u!1 &68701549
 GameObject:
@@ -246,7 +247,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sliderUI: {fileID: 2141802998}
-  button: {fileID: 0}
+  textSliderValue: {fileID: 68701552}
+  button: {fileID: 95733766}
 --- !u!114 &68701552
 MonoBehaviour:
   m_ObjectHideFlags: 0

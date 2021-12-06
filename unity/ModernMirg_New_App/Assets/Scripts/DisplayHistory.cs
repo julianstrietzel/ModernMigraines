@@ -6,13 +6,10 @@ using UnityEngine.UI;
 using TMPro;
 using static LocalDataManager;
 using System.Linq;
- 
-public class DisplayData : MonoBehaviour
+
+public class DisplayHistory : MonoBehaviour
 {
-
-   public DayData today;
-   public TextMeshProUGUI textMesh;
-
+	public TextMeshProUGUI textMesh;
     void Start(){
 
       GameObject o = GameObject.Find("JulianStuff");
@@ -23,17 +20,22 @@ public class DisplayData : MonoBehaviour
 
       KeyValuePair<int, DayData> today = list[list.Count - 1];
 
-      
-
-		  textMesh.text = epoch2string(today.Key) + "" + today.Value.ToString();
-		return;
+      string output = "";
+      int j = 1;
+      for (int i = 7; i --> 0; )
+        {
+            if(list.Count - j > 0)
+                output = output + "\n" + epoch2string(sortd[(list.Count - j)].Key) + " migraine: " + sortd[(list.Count - j)].Value.ToString();
+            
+            j = j+1;
+        }
+		  textMesh.text = output;
 
     }
 
 
       private string epoch2string(int epoch) {
-    return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(epoch).ToShortDateString();
-}
+        return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(epoch).ToShortDateString();
+      }
 
-
-}
+    }

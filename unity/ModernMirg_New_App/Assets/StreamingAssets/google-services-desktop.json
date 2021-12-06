@@ -11,7 +11,7 @@
       }, 
       "oauth_client": [
         {
-          "client_id": "642896861117-86amnnaod40prhn8jjd113aaaut5jdna.apps.googleusercontent.com"
+          "client_id": "642896861117-3dto4ehbuip253ipje3o55ck75b9s3e4.apps.googleusercontent.com"
         }
       ], 
       "api_key": [
@@ -20,9 +20,9 @@
         }
       ], 
       "client_info": {
-        "mobilesdk_app_id": "1:642896861117:ios:f13fed9a91a2a2f94ca4d4", 
+        "mobilesdk_app_id": "1:642896861117:ios:6eeeb0d5b1e4ccec4ca4d4", 
         "android_client_info": {
-          "package_name": "com.MMCom.MMApp"
+          "package_name": "com.MMCom.MMApp6"
         }
       }
     }
